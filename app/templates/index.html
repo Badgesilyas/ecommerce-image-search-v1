@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Search by Image</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">E-Commerce Image Search</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero bg-primary text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4">Find Products by Image</h1>
+            <p class="lead">Upload an image and let us help you find similar products!</p>
+        </div>
+    </header>
+
+    <!-- Upload Form Section with Drag and Drop -->
+    <section class="upload-section py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h3 class="card-title text-center mb-4">Upload Your Image</h3>
+                            <form id="upload-form" enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Choose an image to upload</label>
+                                    <div id="drop-area" class="border border-primary p-4 text-center mb-3">
+                                        <p>Drag & Drop your image here</p>
+                                        <p>Or</p>
+                                        <input class="form-control" type="file" id="image" name="image" accept="image/*" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section py-5 bg-light">
+        <div class="container">
+            <h3 class="text-center mb-4">Search Results</h3>
+            <div class="row" id="results-list">
+                <!-- Results will appear here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 E-Commerce Image Search. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS to handle the form submission and drag-and-drop functionality -->
+    <script>
+        // Preventing default dragover and drop events to enable drag-and-drop
+        const dropArea = document.getElementById('drop-area');
+
+        dropArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropArea.classList.add('bg-light');
+        });
+
+        dropArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dropArea.classList.remove('bg-light');
+        });
+
+        dropArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropArea.classList.remove('bg-light');
+            const file = e.dataTransfer.files[0];
+            document.getElementById('image').files = e.dataTransfer.files;  // Set the dropped file in the file input
+        });
+
+        // Handle form submission
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            const imageFile = document.getElementById('image').files[0];
+            formData.append('image', imageFile);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results-list');
+                resultsDiv.innerHTML = '';
+                if (data.error) {
+                    resultsDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                } else {
+                    let list = '';
+                    data.results.forEach(item => {
+                        list += `<div class="col-md-4 mb-3"><div class="card"><img src="https://via.placeholder.com/150" class="card-img-top" alt="${item.label}"><div class="card-body"><h5 class="card-title">${item.label}</h5><p class="card-text">Probability: ${(item.probability * 100).toFixed(2)}%</p></div></div></div>`;
+                    });
+                    resultsDiv.innerHTML = list;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const resultsDiv = document.getElementById('results-list');
+                resultsDiv.innerHTML = `<div class="alert alert-danger">An error occurred while processing the image.</div>`;
+            });
+        });
+    </script>
+</body>
+</html>
