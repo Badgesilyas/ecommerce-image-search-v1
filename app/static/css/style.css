@@ -1,0 +1,70 @@
+/* Custom Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.hero {
+  background-color: #007bff;
+  color: white;
+  padding: 50px 0;
+}
+
+.card {
+  border-radius: 8px;
+}
+
+.card img {
+  border-radius: 8px;
+  max-height: 200px;
+  object-fit: cover;
+}
+
+.upload-section {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+#drop-area {
+  border: 2px dashed #007bff;
+  padding: 30px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#drop-area.bg-light {
+  background-color: #e9ecef;
+}
+/* Custom Styles for Result Cards */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-title {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #555;
+}
+
+
+footer {
+  background-color: #343a40;
+  color: white;
+}
+
+footer p {
+  margin-bottom: 0;
+}
